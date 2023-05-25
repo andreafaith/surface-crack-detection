@@ -33,8 +33,7 @@
 
 
 import streamlit as st
-from PIL import Image, ImageDraw
-import torch
+import tensorflow as tf
 
 model = model=tf.keras.models.load_model('SurfaceCrackDetection.h5')
 
