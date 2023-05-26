@@ -3,7 +3,6 @@ import tensorflow as tf
 from keras.models import load_model
 import numpy as np
 from PIL import Image, ImageOps
-from clf import predict
 
 @st.cache(allow_output_mutation=True)
 def load_model_from_file():
