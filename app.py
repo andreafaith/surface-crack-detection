@@ -35,7 +35,7 @@ else:
         if image:
             st.image(image, use_column_width=True)
             prediction = import_and_predict(image, model)
-            if prediction >= 0.5:
+            if prediction >= 0.2:
                 result = 'Crack/s'
             else:
                 result = 'no Crack/s'
