@@ -41,6 +41,11 @@ else:
                 result = 'no Crack/s'
             string = f"The Surface has {result}!"
             st.success(string)
+            labels = predict(file_up)
+
+            # print out the top 5 prediction labels with scores
+            for i in labels:
+                st.write("Prediction (index, name)", i[0], ",   Score: ", i[1])
         else:
             st.text("The file is invalid. Upload a valid image file.")
     except Exception as e:
