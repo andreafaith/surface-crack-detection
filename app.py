@@ -1,32 +1,48 @@
 import streamlit as st
 import tensorflow as tf
+from keras.models import load_model
+import numpy as np
+from PIL import Image, ImageOps
 
 @st.cache(allow_output_mutation=True)
-def load_model():
-  model=tf.keras.models.load_model('SurfaceCrackDetection.h5')
-  return model
-model=load_model()
-st.write("""
-# Surface Crack Detection System"""
-)
-file=st.file_uploader("Choose a photo from computer",type=["jpg","png"])
+def load_model_from_file():
+    model = tf.keras.models.load_model('SurfaceCrackDetection2.h5')
+    return model
 
-import cv2
-from PIL import Image,ImageOps
-import numpy as np
-def import_and_predict(image_data,model):
-    size=(120,120)
-    image=ImageOps.fit(image_data,size,Image.ANTIALIAS)
-    img=np.asarray(image)
-    img_reshape=img[np.newaxis,...]
-    prediction=model.predict(img_reshape)
-    return prediction
+model = load_model_from_file()
+
+classes = {0: 'Crack', 1: 'No Crack'}
+
+st.write("""
+# Surface Crack Detection System
+""")
+st.write("#### Deployed by Andrea Faith Alimorong and Meljune Royette Go")
+file = st.file_uploader("Choose a photo from computer", type=["jpg", "png"])
+
+def import_and_predict(image_data, model):
+    size = (120, 120)
+    image = ImageOps.fit(image_data, size, Image.ANTIALIAS)
+    img = np.asarray(image)
+    img_reshape = np.reshape(img, (1, 120, 120, 3))
+    prediction = model.predict(img_reshape)
+    return prediction[0][0]
+
 if file is None:
     st.text("Please upload an image file")
 else:
-    image=Image.open(file)
-    st.image(image,use_column_width=True)
-    prediction=import_and_predict(image,model)
-    class_names=['Looks like there is a crack on that image you just provided','Looks like there is no crack on that image you just provided']
-    string="PREDICTION : "+class_names[np.argmax(prediction)]
-    st.success(string)
+    try:
+        image = Image.open(file) if file else None
+        if image:
+            st.image(image, use_column_width=True)
+            prediction = import_and_predict(image, model)
+            if prediction >= 0.5:
+                result = 'Crack/s'
+            else:
+                result = 'no Crack/s'
+            string = f"The Surface has {result}!"
+            st.success(string)
+        else:
+            st.text("The file is invalid. Upload a valid image file.")
+    except Exception as e:
+        st.text("An error occurred while processing the image.")
+        st.text(str(e))
